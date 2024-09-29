@@ -1,0 +1,31 @@
+<!-- templates/chat.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Chat</title>
+</head>
+<body>
+    <h1>AI Chat Interface</h1>
+
+    <!-- Chat History -->
+    <div id="chat-history">
+        {% for entry in history %}
+            <p><strong>{{ entry.role }}</strong>: {{ entry.parts }}</p>
+        {% endfor %}
+    </div>
+
+    <!-- User Input Form -->
+    <form method="POST">
+        {% csrf_token %}
+        <textarea name="user_input" rows="4" cols="50" placeholder="Type your message here..."></textarea><br>
+        <input type="submit" value="Send">
+    </form>
+
+    <!-- Model Response -->
+    {% if response %}
+        <div>
+            <p><strong>Model Response:</strong> {{ response }}</p>
+        </div>
+    {% endif %}
+</body>
+</html>

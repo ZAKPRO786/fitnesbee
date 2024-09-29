@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url("{% static 'assets/images/training-image-01.jpg' %}") no-repeat center center fixed;
+            background-size: cover; /* Ensures the image covers the entire background */
+            margin: 0;
+            padding: 0;
+        }
+
+        .chat-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header {
+            background-color: #343a40;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .chat-body {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 30px;
+        }
+
+        /* Styling for user message */
+        .user-message {
+            padding: 15px;
+            background-color: #f1f3f5;
+            border-radius: 10px;
+            font-size: 16px;
+            line-height: 1.5;
+            border: 1px solid #ced4da;
+            margin-bottom: 10px;
+            white-space: pre-wrap; /* Allows line breaks */
+        }
+
+        /* Styling for bot response */
+        .bot-response {
+            padding: 15px;
+            background-color: #d4edda;
+            border-radius: 10px;
+            font-size: 16px;
+            line-height: 1.5;
+            border: 1px solid #c3e6cb;
+            white-space: pre-wrap; /* Allows line breaks */
+        }
+
+        .send-form {
+            padding: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .clear-button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>AI  Mental TRAINER</h2>
+        </div>
+
+        <div class="chat-body">
+            <!-- Existing messages -->
+            {% for message in messages %}
+            <div class="message">
+                <div class="user-message">
+                    <strong>User:</strong><br>
+                    {{ message.user_message }}
+                </div>
+                <div class="bot-response">
+                    <strong>Bot:</strong><br>
+                    {{ message.bot_response }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="send-form">
+            <form action="{% url 'send_message1' %}" method="post">
+                {% csrf_token %}
+                <textarea name="user_message" placeholder="Enter your message" class="form-control" rows="3"></textarea>
+                <input type="submit" value="Send" class="btn btn-primary btn-block mt-3">
+            </form>
+        </div>
+
+        <div class="clear-button">
+            <form action="{% url 'clear_messages' %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Clear Previous Results" class="btn btn-secondary btn-block">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Fetch the profile data from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const profileData = urlParams.get('profile_data');
+
+        if (profileData) {
+            // Parse the profile data
+            const parsedData = JSON.parse(decodeURIComponent(profileData));
+            const userMessage = `Profile created with the following details:\n\n${JSON.stringify(parsedData, null, 2)}`;
+
+            // Display the profile data as a user message
+            const chatBody = document.querySelector('.chat-body');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.classList.add('message');
+            userMessageDiv.innerHTML = `
+                <div class="user-message">
+                    <strong>User:</strong><br>
+                    ${userMessage.replace(/\n/g, '<br>')}
+                </div>
+            `;
+            chatBody.appendChild(userMessageDiv);
+
+            // Automatically create a diet plan based on the user profile
+            createDietPlan(parsedData);
+        }
+
+        function createDietPlan(profile) {
+            // Send the profile data to your backend API for diet plan generation
+            const apiEndpoint = "/generate_diet_plan/"; // Adjust this URL as necessary
+            const payload = {
+                profile_data: profile
+            };
+
+            fetch(apiEndpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}" // Add CSRF token if needed
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Assuming the diet plan is in data.plan
+                const dietPlanMessage = `Here’s your generated diet plan:\n\n${data.plan}`;
+                displayDietPlan(dietPlanMessage);
+            })
+            .catch(error => {
+                console.error("Error generating diet plan:", error);
+            });
+        }
+
+        function displayDietPlan(dietPlan) {
+            const chatBody = document.querySelector('.chat-body');
+            const dietPlanDiv = document.createElement('div');
+            dietPlanDiv.classList.add('message');
+            dietPlanDiv.innerHTML = `
+                <div class="bot-response">
+                    <strong>Bot:</strong><br>
+                    ${dietPlan.replace(/\n/g, '<br>')}
+                </div>
+            `;
+            chatBody.appendChild(dietPlanDiv);
+        }
+    </script>
+</body>
+</html>

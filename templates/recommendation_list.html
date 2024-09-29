@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Recommendations</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Your Personalized Recommendations</h1>
+    <ul>
+        {% for recommendation in recommendations %}
+            <li>{{ recommendation.generated_text }} - {{ recommendation.created_at }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

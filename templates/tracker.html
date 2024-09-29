@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise Tracker</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .exercise-form {
+            margin-bottom: 20px;
+        }
+
+        .exercise-form label {
+            margin-bottom: 10px;
+        }
+
+        .exercise-form select {
+            width: 100%;
+            height: 40px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+        }
+
+        .exercise-form button[type="button"] {
+            width: 100%;
+            height: 40px;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #337ab7;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .exercise-form button[type="button"]:hover {
+            background-color: #23527c;
+        }
+
+        .video-feed {
+            margin-top: 20px;
+        }
+
+        .video-feed img {
+            width: 100%;
+            height: 480px;
+            border: 1px solid #000;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Exercise Tracker</h1>
+
+        <form class="exercise-form">
+            <label for="exercise">Select Exercise:</label>
+            <select id="exercise" name="exercise" class="form-control">
+                <option value="squats">Squats</option>
+                <option value="dumbbell">Dumbbell Lifting</option>
+                <!-- Add more exercise options as needed -->
+            </select>
+            <button type="button" class="btn btn-primary" onclick="startTracking()">Start Tracking</button>
+        </form>
+
+        <h2 class="text-center">Video Feed:</h2>
+        <div class="video-feed">
+            <img id="videoFeed" src="" alt="Video feed will appear here">
+        </div>
+    </div>
+
+    <script>
+        function startTracking() {
+            var exercise = document.getElementById("exercise").value;
+            var videoFeed = document.getElementById("videoFeed");
+
+            // Log the exercise selection for debugging
+            console.log("Selected Exercise: ", exercise);
+
+            // Update the src attribute of the image tag to start the video feed
+            videoFeed.src = "/video_feed/?exercise=" + exercise;
+
+            // Log the video feed URL for debugging
+            console.log("Video Feed URL: ", videoFeed.src);
+        }
+    </script>
+</body>
+</html>

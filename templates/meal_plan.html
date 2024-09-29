@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meal Plan</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .meal-plan {
+            margin-top: 20px;
+        }
+
+        .meal-plan h1 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .meal-plan p {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+
+        .meal-section {
+            margin-bottom: 40px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+        }
+
+        .meal-section h2 {
+            margin-top: 0;
+            font-size: 28px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .meal-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .meal-section li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            transition: background-color 0.3s;
+        }
+
+        .meal-section li:hover {
+            background-color: #e9ecef;
+        }
+
+        .total-calories {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #28a745;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="meal-plan">
+            <h1>Meal Plan for {{ name }}</h1>
+            <p>Your daily intake needs to have: <span class="text-primary">{{ bmr }}</span> calories.</p>
+
+            <div class="meal-section">
+                <h2><i class="fas fa-utensils"></i> Selected Items for Breakfast:</h2>
+                <ul>
+                    {% for item in breakfast_items %}
+                        <li><i class="fas fa-check-circle"></i> {{ item }}</li>
+                    {% endfor %}
+                </ul>
+                <p class="total-calories">Total Calories: {{ breakfast_calories }}</p>
+            </div>
+
+            <div class="meal-section">
+                <h2><i class="fas fa-utensils"></i> Selected Items for Lunch:</h2>
+                <ul>
+                    {% for item in lunch_items %}
+                        <li><i class="fas fa-check-circle"></i> {{ item }}</li>
+                    {% endfor %}
+                </ul>
+                <p class="total-calories">Total Calories: {{ lunch_calories }}</p>
+            </div>
+
+            <div class="meal-section">
+                <h2><i class="fas fa-utensils"></i> Selected Items for Dinner:</h2>
+                <ul>
+                    {% for item in dinner_items %}
+                        <li><i class="fas fa-check-circle"></i> {{ item }}</li>
+                    {% endfor %}
+                </ul>
+                <p class="total-calories">Total Calories: {{ dinner_calories }}</p>
+            </div>
+
+            <div class="footer">
+                <p>&copy; {{ current_year }} Meal Planner. All Rights Reserved.</p>
+                <p><a href="#">Contact Us</a> | <a href="#">Privacy Policy</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

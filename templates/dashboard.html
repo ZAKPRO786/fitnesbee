@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="date"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .progress {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #e2f0d5;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>User Dashboard</h1>
+
+<!-- Workout Form -->
+<h2>Add Workout</h2>
+<form id="workout-form">
+    <label for="workout-date">Date:</label>
+    <input type="date" id="workout-date" name="date" required>
+    <label for="workout-weight">Weight (kg):</label>
+    <input type="number" id="workout-weight" name="weight" required step="0.1">
+    <button type="submit">Add Workout</button>
+</form>
+
+<!-- Meal Form -->
+<h2>Add Meal</h2>
+<form id="meal-form">
+    <label for="meal-date">Date:</label>
+    <input type="date" id="meal-date" name="date" required>
+    <label for="meal-calories">Calories:</label>
+    <input type="number" id="meal-calories" name="calories" required step="1">
+    <button type="submit">Add Meal</button>
+</form>
+
+<!-- Progress Display -->
+<h2>Your Progress</h2>
+<div class="progress" id="progress-summary">
+    <h3>Progress Summary</h3>
+    <p id="progress-message"></p>
+</div>
+
+<!-- Display Lists -->
+<h2>Your Workouts</h2>
+<ul id="workout-list"></ul>
+
+<h2>Your Meals</h2>
+<ul id="meal-list"></ul>
+
+<script>
+$(document).ready(function() {
+    // Load existing data
+    loadData();
+
+    // Submit workout form
+    $('#workout-form').on('submit', function(e) {
+        e.preventDefault();
+        const data = {
+            date: $('#workout-date').val(),
+            weight: $('#workout-weight').val(),
+        };
+        $.post('/workouts/create/', data, function(response) {
+            loadData();
+            $('#workout-form')[0].reset();
+        }).fail(function(xhr) {
+            alert("Error: " + xhr.responseJSON.message);
+        });
+    });
+
+    // Submit meal form
+    $('#meal-form').on('submit', function(e) {
+        e.preventDefault();
+        const data = {
+            date: $('#meal-date').val(),
+            calories: $('#meal-calories').val(),
+        };
+        $.post('/meals/create/', data, function(response) {
+            loadData();
+            $('#meal-form')[0].reset();
+        }).fail(function(xhr) {
+            alert("Error: " + xhr.responseJSON.message);
+        });
+    });
+
+    // Function to load data and calculate progress
+    function loadData() {
+        // Load workouts
+        $.get('/workouts/', function(data) {
+            $('#workout-list').empty();
+            let totalWeight = 0;
+            data.forEach(function(workout) {
+                $('#workout-list').append(`<li>${workout.date}: ${workout.weight} kg</li>`);
+                totalWeight += parseFloat(workout.weight);
+            });
+            updateProgress(totalWeight, 'workouts', data.length);
+        });
+
+        // Load meals
+        $.get('/meals/', function(data) {
+            $('#meal-list').empty();
+            let totalCalories = 0;
+            data.forEach(function(meal) {
+                $('#meal-list').append(`<li>${meal.date}: ${meal.calories} calories</li>`);
+                totalCalories += parseInt(meal.calories);
+            });
+            updateProgress(totalCalories, 'meals', data.length);
+        });
+    }
+
+    // Function to update progress based on workouts and meals
+    function updateProgress(total, type, count) {
+        let message = '';
+        if (type === 'workouts') {
+            message = `You've recorded ${count} workouts with a total weight of ${total} kg.`;
+        } else if (type === 'meals') {
+            message = `You've consumed a total of ${total} calories over ${count} meals.`;
+        }
+
+        $('#progress-message').text(message);
+
+        // Here you can add additional logic for overall progress
+        // For example, if you have target goals for weight loss, muscle gain, etc.
+    }
+});
+</script>
+
+</body>
+</html>

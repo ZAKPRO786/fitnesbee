@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Profile</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff; /* Change text color to white for contrast against the dark background */
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.9); /* Change container background to black with transparency */
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff; /* Keep the header text white */
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #fff; /* Change label text color to white */
+        }
+        .btn-success, .btn-dark, .btn-primary {
+            border-radius: 50px;
+        }
+        .btn-success:hover, .btn-dark:hover, .btn-primary:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s;
+        }
+        .invalid-feedback {
+            font-size: 0.9rem;
+            color: #e63946; /* A red color for error messages */
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #fff; /* Keep footer text color white */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2><i class="fas fa-user-plus"></i> Create Your Profile</h2>
+        <form id="profile-form" method="post" onsubmit="sendProfileData(event)">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}  <!-- Render the field normally; class is already added in the form -->
+                    {% if field.errors %}
+                        <div class="invalid-feedback">
+                            {{ field.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <div class="text-center">
+                <button type="button" class="btn btn-success" onclick="window.location.href='{% url 'dashboard' %}'">
+                    <i class="fas fa-save"></i> Save Profile
+                </button>
+                <button type="button" class="btn btn-dark" onclick="window.location.href='{% url 'list_messages' %}'">
+                    <i class="fas fa-utensils"></i> Create Diet Plan
+                </button>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-dumbbell"></i> Create Workout Plan
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Your Fitness Journey. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function sendProfileData(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+
+            const formData = new FormData(document.getElementById('profile-form'));
+            const userProfileData = {};
+
+            // Convert FormData to a regular object
+            formData.forEach((value, key) => {
+                userProfileData[key] = value;
+            });
+
+            // Create a JSON string of the user profile data
+            const jsonData = JSON.stringify(userProfileData);
+
+            // Redirect to the chatbot page and send the data as a URL parameter
+            const chatbotUrl = "{% url 'list_messages' %}?profile_data=" + encodeURIComponent(jsonData);
+            window.location.href = chatbotUrl; // Redirect to chatbot
+        }
+    </script>
+</body>
+</html>
